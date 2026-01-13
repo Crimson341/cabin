@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   ShoppingBag,
   Coffee,
@@ -7,6 +7,7 @@ import {
   Instagram,
   Facebook,
   ArrowRight,
+  ArrowUpRight,
   Menu,
   X,
   Send,
@@ -14,6 +15,7 @@ import {
   CheckCircle,
   Clock,
   Calendar,
+  Star,
 } from 'lucide-react'
 
 export const Route = createFileRoute('/')({ component: App })
@@ -24,18 +26,19 @@ function useInView(threshold = 0.1) {
   const [isInView, setIsInView] = useState(false)
 
   useEffect(() => {
+    if (!ref.current) return
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true)
+          if (ref.current) observer.unobserve(ref.current)
         }
       },
       { threshold }
     )
 
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
+    observer.observe(ref.current)
 
     return () => observer.disconnect()
   }, [threshold])
@@ -72,6 +75,7 @@ function AnimatedSection({
 
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [hasMounted, setHasMounted] = useState(false)
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -81,7 +85,11 @@ function App() {
   })
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -109,41 +117,63 @@ function App() {
     }
   }
 
-  // Track mouse for parallax effects
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
-      })
+      if (containerRef.current) {
+        const x = (e.clientX / window.innerWidth - 0.5) * 20
+        const y = (e.clientY / window.innerHeight - 0.5) * 20
+        containerRef.current.style.setProperty('--mouse-x', `${x}px`)
+        containerRef.current.style.setProperty('--mouse-y', `${y}px`)
+      }
     }
     window.addEventListener('mousemove', handleMouseMove)
     return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#F5F3EF] text-[#1a1a1a] selection:bg-[#E07B5B] selection:text-white overflow-x-hidden">
+    <div
+      ref={containerRef}
+      className="min-h-screen bg-[#F5F3EF] text-[#1a1a1a] selection:bg-[#E07B5B] selection:text-white overflow-x-hidden"
+      style={{ '--mouse-x': '0px', '--mouse-y': '0px' } as any}
+    >
       {/* Navigation */}
-      <nav className="px-6 md:px-12 py-6 border-b border-[#e5e2dc] animate-fade-down">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <a
-            href="#"
-            className="text-sm font-medium tracking-wide hover:text-[#E07B5B] transition-colors duration-300"
+      <nav
+        className={`px-6 md:px-12 py-6 border-b border-[#1a1a1a] bg-white sticky top-0 z-50 transition-all duration-700 ease-out ${
+          hasMounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+        }`}
+      >
+        <div className="max-w-[1600px] mx-auto flex justify-between items-center">
+          <Link
+            to="/"
+            className="text-[10px] font-black tracking-[0.4em] hover:text-[#E07B5B] transition-colors duration-300 uppercase"
           >
-            WATER STREET COMMONS.
-          </a>
+            WATER STREET COMMONS
+          </Link>
 
-          <div className="hidden md:flex items-center gap-8">
-            {['About', 'Spaces', 'Vendors', 'Visit', 'Contact'].map((item, i) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-sm text-[#666] hover:text-[#1a1a1a] transition-all duration-300 hover:-translate-y-0.5"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                {item}
-              </a>
-            ))}
+          <div className="hidden md:flex items-center gap-12">
+            {['About', 'Spaces', 'Vendors', 'Visit', 'Blog', 'Contact'].map((item, i) => {
+              const isBlog = item === 'Blog'
+              const isAbout = item === 'About'
+              const Component = (isBlog || isAbout) ? Link : 'a'
+              const props = isBlog
+                ? { to: '/blog' }
+                : isAbout
+                ? { to: '/about' }
+                : { href: `#${item.toLowerCase()}` }
+              return (
+                <Component
+                  key={item}
+                  {...props}
+                  className={`text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-300 hover:-translate-y-0.5 ${
+                    isBlog || isAbout
+                      ? 'text-[#E07B5B] hover:text-[#E07B5B]'
+                      : 'text-[#666] hover:text-[#1a1a1a]'
+                  }`}
+                >
+                  {item}
+                </Component>
+              )
+            })}
           </div>
 
           <button
@@ -157,723 +187,388 @@ function App() {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 z-50 bg-[#F5F3EF] p-8 pt-24 flex flex-col gap-6 md:hidden transition-all duration-500 ${
+        className={`fixed inset-0 z-[60] bg-[#F5F3EF] p-8 pt-24 flex flex-col gap-6 md:hidden transition-all duration-500 ${
           mobileMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full pointer-events-none'
         }`}
       >
         <button className="absolute top-6 right-6" onClick={() => setMobileMenuOpen(false)}>
           <X size={24} />
         </button>
-        {['About', 'Spaces', 'Vendors', 'Visit', 'Contact'].map((item, i) => (
-          <a
-            key={item}
-            href={`#${item.toLowerCase()}`}
-            className="text-2xl font-editorial transition-all duration-300"
-            style={{
-              opacity: mobileMenuOpen ? 1 : 0,
-              transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(20px)',
-              transitionDelay: `${i * 100}ms`,
-            }}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            {item}
-          </a>
-        ))}
+        {['About', 'Spaces', 'Vendors', 'Visit', 'Blog', 'Contact'].map((item, i) => {
+          const isBlog = item === 'Blog'
+          const isAbout = item === 'About'
+          const Component = (isBlog || isAbout) ? Link : 'a'
+          const props = isBlog
+            ? { to: '/blog' }
+            : isAbout
+            ? { to: '/about' }
+            : { href: `#${item.toLowerCase()}` }
+          return (
+            <Component
+              key={item}
+              {...props}
+              className={`text-4xl font-editorial italic transition-all duration-300 ${
+                isBlog || isAbout ? 'text-[#E07B5B]' : ''
+              }`}
+              style={{
+                opacity: mobileMenuOpen ? 1 : 0,
+                transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(20px)',
+                transitionDelay: `${i * 100}ms`,
+              }}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {item}
+            </Component>
+          )
+        })}
       </div>
 
-      <main>
-        {/* Hero Section - Editorial Magazine Style */}
-        <section className="px-6 md:px-12 py-20 md:py-32 overflow-hidden">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-              {/* Left Content - Large Stacked Typography */}
-              <div className="lg:col-span-7">
-                <p
-                  className="text-xs text-[#E07B5B] uppercase tracking-[0.2em] mb-6 animate-fade-up"
-                  style={{ animationDuration: '0.8s' }}
-                >
-                  Downtown Alpena
-                </p>
-                <h1
-                  className="font-editorial leading-[0.95] mb-10 animate-fade-up"
-                  style={{ animationDuration: '1s' }}
-                >
-                  <span className="block text-6xl md:text-8xl lg:text-[120px] italic hover:text-[#E07B5B] transition-colors duration-500 cursor-default">
-                    Water
-                  </span>
-                  <span className="block text-6xl md:text-8xl lg:text-[120px] italic hover:text-[#E07B5B] transition-colors duration-500 cursor-default">
-                    Street
-                  </span>
-                  <span className="block text-6xl md:text-8xl lg:text-[120px] hover:text-[#E07B5B] transition-colors duration-500 cursor-default font-medium not-italic">
-                    Commons
-                  </span>
-                </h1>
-                <div
-                  className="flex flex-col sm:flex-row items-start sm:items-center gap-6 animate-fade-up"
-                  style={{ animationDelay: '400ms', animationDuration: '1s' }}
-                >
-                  <a
-                    href="#contact"
-                    className="group inline-flex items-center gap-3 bg-[#1a1a1a] text-white px-8 py-4 text-sm font-medium tracking-wide hover:bg-[#E07B5B] transition-all duration-300"
-                  >
-                    APPLY FOR 2026
-                    <ArrowRight
-                      size={16}
-                      className="group-hover:translate-x-1 transition-transform duration-300"
-                    />
-                  </a>
-                  <a
-                    href="#about"
-                    className="group inline-flex items-center gap-2 text-sm tracking-wide text-[#666] hover:text-[#1a1a1a] transition-colors border-b border-[#666] pb-1"
-                  >
-                    Discover More
-                  </a>
-                </div>
-              </div>
-
-              {/* Right Content - Image + Description */}
-              <div
-                className="lg:col-span-5 animate-fade-left"
-                style={{ animationDelay: '300ms', animationDuration: '1s' }}
-              >
-                <div
-                  className="aspect-[3/4] overflow-hidden group mb-8"
-                  style={{
-                    transform: `translate(${mousePosition.x * 0.3}px, ${mousePosition.y * 0.3}px)`,
-                    transition: 'transform 0.3s ease-out',
-                  }}
-                >
-                  <img
-                    src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?q=80&w=1200&auto=format&fit=crop"
-                    alt="Downtown riverside"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-                <div className="max-w-sm">
-                  <p className="text-[#666] leading-relaxed mb-4">
-                    A colorful riverside nook with five tiny shops for local makers to grow, share,
-                    and sparkle.
-                  </p>
-                  <p className="text-xs text-[#999] uppercase tracking-wider">
-                    123 Water Street, Alpena MI
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* About Section - Magazine Style */}
-        <section id="about" className="px-6 md:px-12 py-20 md:py-32 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-12 gap-12">
-              <AnimatedSection className="lg:col-span-8">
-                <p className="text-xs text-[#E07B5B] uppercase tracking-[0.2em] mb-6">
-                  The Story
-                </p>
-                <h2 className="font-editorial text-4xl md:text-6xl lg:text-7xl leading-[1.1] mb-8 italic">
-                  Where makers{' '}
-                  <span className="text-[#E07B5B] hover:not-italic cursor-default transition-all duration-300">
-                    grow
-                  </span>
-                  ,{' '}
-                  <span className="text-[#E07B5B] hover:not-italic cursor-default transition-all duration-300">
-                    share
-                  </span>
-                  , and{' '}
-                  <span className="text-[#E07B5B] hover:not-italic cursor-default transition-all duration-300">
-                    sparkle
-                  </span>
-                </h2>
-              </AnimatedSection>
-              <AnimatedSection className="lg:col-span-4 flex flex-col justify-end" delay={200}>
-                <div className="border-l-2 border-[#E07B5B] pl-6">
-                  <p className="text-[#666] leading-relaxed mb-6">
-                    An initiative by the Downtown Development Authority to activate underutilized
-                    riverfront space and provide affordable retail opportunities for emerging
-                    entrepreneurs.
-                  </p>
-                  <div className="flex flex-wrap gap-3 text-xs uppercase tracking-wider">
-                    {['Local', 'Riverside', 'Community'].map((tag, i) => (
-                      <span
-                        key={tag}
-                        className="px-4 py-2 border border-[#e5e2dc] hover:border-[#E07B5B] hover:text-[#E07B5B] transition-all duration-300 cursor-default"
-                        style={{ transitionDelay: `${i * 50}ms` }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </AnimatedSection>
-            </div>
-          </div>
-        </section>
-
-        {/* Spaces Section */}
-        <section id="spaces" className="px-6 md:px-12 py-20 md:py-32">
-          <div className="max-w-7xl mx-auto">
-            <AnimatedSection>
-              <div className="grid lg:grid-cols-12 gap-8 mb-16">
-                <div className="lg:col-span-7">
-                  <p className="text-xs text-[#E07B5B] uppercase tracking-[0.2em] mb-6">
-                    The Spaces
-                  </p>
-                  <h2 className="font-editorial text-4xl md:text-6xl lg:text-7xl italic leading-[1.1]">
-                    What's at the Commons?
-                  </h2>
-                </div>
-                <div className="lg:col-span-5 flex items-end">
-                  <p className="text-[#666] leading-relaxed text-lg">
-                    Three distinct experiences designed to bring the community together by the
-                    river.
-                  </p>
-                </div>
+      <main className="max-w-[1600px] mx-auto border-x border-[#1a1a1a]">
+        {/* HERO BLOCK ARCHITECTURE */}
+        <section className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a]">
+          {/* Block 1: Title */}
+          <div className="md:col-span-9 p-8 md:p-16 lg:p-24 border-r border-[#1a1a1a] bg-white flex flex-col justify-between min-h-[500px]">
+            <AnimatedSection delay={100}>
+              <div className="flex items-center gap-4 mb-12">
+                <span className="text-[10px] font-black tracking-[0.4em] uppercase px-4 py-2 border border-[#1a1a1a] text-[#1a1a1a]">
+                  Established 2026
+                </span>
+                <span className="text-[10px] font-bold text-[#999] tracking-widest uppercase">
+                  Alpena, MI
+                </span>
               </div>
             </AnimatedSection>
 
-            {/* Three Spaces - Editorial Magazine Grid */}
-            <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
-              {/* The Shops - Large Featured Card */}
-              <AnimatedSection delay={100} className="lg:col-span-7 lg:row-span-2">
-                <div className="group h-full bg-white overflow-hidden hover:shadow-2xl transition-all duration-500">
-                  <div className="aspect-[4/3] lg:aspect-auto lg:h-[400px] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?q=80&w=1200&auto=format&fit=crop"
-                      alt="The Shops"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute top-6 left-6">
-                      <span className="font-editorial text-7xl md:text-8xl text-white/20 font-medium">
-                        01
-                      </span>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-8">
-                      <p className="text-xs text-white/70 uppercase tracking-[0.2em] mb-2">
-                        Retail · 5 Spaces
-                      </p>
-                      <h3 className="font-editorial text-3xl md:text-4xl text-white italic">
-                        The Shops
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="p-8">
-                    <p className="text-[#666] leading-relaxed text-lg mb-6">
-                      Five tiny-but-mighty retail spaces for artisans, bakers, and makers.
-                      Perfectly pint-sized for your first storefront.
-                    </p>
-                    <div className="flex items-center gap-2 text-sm">
-                      <ShoppingBag size={16} className="text-[#E07B5B]" />
-                      <span className="text-[#E07B5B] font-medium">Now accepting applications</span>
-                    </div>
-                  </div>
-                </div>
-              </AnimatedSection>
+            <AnimatedSection delay={200}>
+              <h1 className="font-editorial text-7xl md:text-9xl lg:text-[180px] italic leading-[0.75] tracking-tighter -ml-2">
+                Water <br />
+                Street <br />
+                <span className="text-[#E07B5B] not-italic font-medium">Commons</span>
+              </h1>
+            </AnimatedSection>
+          </div>
 
-              {/* Anchor Shed */}
-              <AnimatedSection delay={200} className="lg:col-span-5">
-                <div className="group h-full bg-white overflow-hidden hover:shadow-xl transition-all duration-500">
-                  <div className="aspect-[16/9] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop"
-                      alt="Anchor Shed"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <span className="font-editorial text-5xl text-white/20 font-medium">
-                        02
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Coffee size={16} className="text-[#E07B5B]" />
-                      <p className="text-xs text-[#999] uppercase tracking-[0.15em]">
-                        Food & Beverage
-                      </p>
-                    </div>
-                    <h3 className="font-editorial text-2xl italic mb-2 group-hover:text-[#E07B5B] transition-colors">
-                      Anchor Shed
-                    </h3>
-                    <p className="text-[#666] text-sm leading-relaxed">
-                      Our central hub for yummy drinks and treats. The heart of our social
-                      district experience.
-                    </p>
-                  </div>
-                </div>
-              </AnimatedSection>
-
-              {/* Cozy Square */}
-              <AnimatedSection delay={300} className="lg:col-span-5">
-                <div className="group h-full bg-white overflow-hidden hover:shadow-xl transition-all duration-500">
-                  <div className="aspect-[16/9] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop"
-                      alt="Cozy Square"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <span className="font-editorial text-5xl text-white/20 font-medium">
-                        03
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Users size={16} className="text-[#E07B5B]" />
-                      <p className="text-xs text-[#999] uppercase tracking-[0.15em]">
-                        Gathering Space
-                      </p>
-                    </div>
-                    <h3 className="font-editorial text-2xl italic mb-2 group-hover:text-[#E07B5B] transition-colors">
-                      Cozy Square
-                    </h3>
-                    <p className="text-[#666] text-sm leading-relaxed">
-                      Fire pits, string lights, and plenty of room to sit and chat. Life
-                      happens by the river.
-                    </p>
-                  </div>
-                </div>
-              </AnimatedSection>
+          {/* Block 2: Utility/Star */}
+          <div className="md:col-span-3 bg-[#1a1a1a] text-white p-8 flex flex-col items-center justify-center relative overflow-hidden group border-b md:border-b-0 border-[#1a1a1a]">
+            <div className="relative z-10 animate-spin-slow opacity-20">
+              <Star size={180} strokeWidth={1} fill="currentColor" />
+            </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+              <p className="text-[10px] font-black tracking-[0.3em] uppercase mb-6 text-[#E07B5B]">Our Purpose</p>
+              <p className="font-editorial text-4xl italic leading-tight">Sip, Shop <br/> & Stroll</p>
+              <div className="mt-12 w-12 h-12 border border-white/20 rounded-full flex items-center justify-center group-hover:bg-[#E07B5B] group-hover:border-[#E07B5B] transition-all duration-500">
+                <ArrowRight size={20} className="-rotate-45" />
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Social District Banner - Editorial Magazine Style */}
-        <section className="px-6 md:px-12 py-24 md:py-40 bg-[#1a1a1a] text-white overflow-hidden">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-12 gap-12 items-center">
-              <AnimatedSection className="lg:col-span-7">
-                <p className="text-xs text-[#E07B5B] uppercase tracking-[0.2em] mb-8">
-                  Official Social District
-                </p>
-                <h2 className="font-editorial text-5xl md:text-7xl lg:text-8xl italic leading-[1] mb-8">
-                  <span className="block hover:text-[#E07B5B] transition-colors duration-300">
-                    Sip,
-                  </span>
-                  <span className="block hover:text-[#E07B5B] transition-colors duration-300">
-                    Shop,
-                  </span>
-                  <span className="block not-italic font-medium hover:text-[#E07B5B] transition-colors duration-300">
-                    & Stroll
-                  </span>
-                </h2>
-                <p className="text-[#999] leading-relaxed mb-10 max-w-md text-lg">
-                  Grab a cozy beverage from our anchor shed and enjoy it while you browse the
-                  shops or wander the beautiful Thunder Bay River trail.
-                </p>
-                <a
-                  href="#"
-                  className="group inline-flex items-center gap-3 border border-white/30 px-8 py-4 text-sm tracking-wide hover:bg-white hover:text-[#1a1a1a] transition-all duration-300"
-                >
-                  LEARN DISTRICT RULES
-                  <ArrowRight
-                    size={16}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </a>
-              </AnimatedSection>
-              <AnimatedSection className="lg:col-span-5" delay={200}>
-                <div className="aspect-[3/4] overflow-hidden group">
-                  <img
-                    src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1200&auto=format&fit=crop"
-                    alt="Social District"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-              </AnimatedSection>
-            </div>
-          </div>
-        </section>
-
-        {/* Visit Section - Editorial Magazine Style */}
-        <section id="visit" className="px-6 md:px-12 py-20 md:py-32">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-3 gap-12">
-              <AnimatedSection>
-                <p className="text-xs text-[#E07B5B] uppercase tracking-[0.2em] mb-6">Visit</p>
-                <h2 className="font-editorial text-4xl md:text-5xl italic mb-6">
-                  Plan Your Visit
-                </h2>
-                <p className="text-[#666] leading-relaxed text-lg">
-                  We're open seasonally from May through October. Come discover our little
-                  corner of downtown Alpena.
-                </p>
-              </AnimatedSection>
-
-              <AnimatedSection delay={100}>
-                <div className="bg-white rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Calendar
-                      size={20}
-                      className="text-[#E07B5B] group-hover:scale-110 transition-transform"
-                    />
-                    <span className="font-medium">Season</span>
-                  </div>
-                  <p className="text-2xl font-editorial mb-2">May — October</p>
-                  <p className="text-[#666] text-sm">2026 Season</p>
-                </div>
-              </AnimatedSection>
-
-              <AnimatedSection delay={200}>
-                <div className="bg-white rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Clock
-                      size={20}
-                      className="text-[#E07B5B] group-hover:rotate-12 transition-transform"
-                    />
-                    <span className="font-medium">Hours</span>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    {[
-                      ['Mon – Thu', '10am – 6pm'],
-                      ['Fri – Sat', '10am – 8pm'],
-                      ['Sunday', '11am – 5pm'],
-                    ].map(([day, hours], i) => (
-                      <div
-                        key={day}
-                        className="flex justify-between hover:text-[#E07B5B] transition-colors cursor-default"
-                        style={{ transitionDelay: `${i * 50}ms` }}
-                      >
-                        <span className="text-[#666]">{day}</span>
-                        <span>{hours}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </AnimatedSection>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section - Editorial Magazine Style */}
-        <section className="px-6 md:px-12 py-24 md:py-40 bg-white overflow-hidden">
-          <AnimatedSection>
-            <div className="max-w-5xl mx-auto text-center">
-              <p className="text-xs text-[#E07B5B] uppercase tracking-[0.2em] mb-8">
-                Join Us
+        {/* HERO ROW 2: IMAGE & CONTENT */}
+        <section className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a]">
+          {/* Block 3: Value Prop */}
+          <div className="md:col-span-4 p-8 md:p-12 border-r border-[#1a1a1a] bg-[#F5F3EF] flex flex-col justify-between">
+            <AnimatedSection delay={300}>
+              <p className="text-xl md:text-2xl font-editorial italic leading-relaxed text-[#1a1a1a] mb-12">
+                "A colorful riverside nook with five tiny shops for local makers to grow, share, and sparkle."
               </p>
-              <h2 className="font-editorial text-5xl md:text-7xl lg:text-8xl italic leading-[1.05] mb-10">
-                Have You Heard About Our Vendor Program?
+              <div className="flex flex-col gap-4">
+                <Link
+                  to="/about"
+                  className="group flex items-center justify-between bg-[#1a1a1a] text-white px-8 py-6 text-[10px] font-black tracking-[0.3em] uppercase hover:bg-[#E07B5B] transition-all duration-500"
+                >
+                  The Story
+                  <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform duration-500" />
+                </Link>
+                <a
+                  href="#contact"
+                  className="flex items-center justify-between border border-[#1a1a1a] px-8 py-6 text-[10px] font-black tracking-[0.3em] uppercase text-[#1a1a1a] hover:bg-white transition-all duration-500"
+                >
+                  Apply for 2026
+                  <ArrowUpRight size={16} />
+                </a>
+              </div>
+            </AnimatedSection>
+          </div>
+
+          {/* Block 4: Hero Image */}
+          <div className="md:col-span-8 h-[400px] md:h-[600px] bg-white overflow-hidden group">
+            <img
+              src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=2000&auto=format&fit=crop"
+              alt="Riverside View"
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
+            />
+          </div>
+        </section>
+
+        {/* ABOUT BLOCK */}
+        <section id="about" className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a]">
+          <div className="md:col-span-8 p-8 md:p-16 lg:p-24 border-r border-[#1a1a1a] bg-white">
+            <AnimatedSection>
+              <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[#E07B5B] mb-8">The Story</p>
+              <h2 className="font-editorial text-4xl md:text-6xl lg:text-8xl italic leading-[1] mb-12">
+                Where makers <span className="text-[#E07B5B]">grow</span>, share, and <span className="text-[#E07B5B]">sparkle</span>
               </h2>
-              <p className="text-[#666] text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
-                We're looking for passionate makers, bakers, and creators to join our 2026
-                season. Affordable rent, built-in foot traffic, and a supportive community.
-              </p>
-              <a
-                href="#contact"
-                className="group inline-flex items-center gap-3 bg-[#1a1a1a] text-white px-10 py-5 text-sm font-medium tracking-wide hover:bg-[#E07B5B] transition-all duration-300"
-              >
-                APPLY NOW
-                <ArrowRight
-                  size={16}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </a>
-            </div>
-          </AnimatedSection>
+              <div className="flex flex-wrap gap-4 mt-12">
+                {['Local', 'Riverside', 'Community', 'Craft'].map((tag) => (
+                  <span key={tag} className="px-6 py-2 border border-[#1a1a1a]/10 text-[10px] font-bold tracking-widest uppercase">{tag}</span>
+                ))}
+              </div>
+            </AnimatedSection>
+          </div>
+          
+          <div className="md:col-span-4 p-8 md:p-12 bg-[#1a1a1a] text-white flex flex-col justify-end">
+            <AnimatedSection delay={200}>
+              <div className="border-l-2 border-[#E07B5B] pl-8">
+                <p className="text-sm font-bold tracking-widest uppercase leading-loose opacity-60 mb-12">
+                  An initiative by the Downtown Development Authority to activate underutilized riverfront space and provide affordable retail opportunities for emerging entrepreneurs.
+                </p>
+                <Link to="/about" className="group inline-flex items-center gap-4 text-[10px] font-black tracking-[0.3em] uppercase">
+                  Learn More
+                  <div className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-[#1a1a1a] transition-all duration-500">
+                    <ArrowRight size={16} />
+                  </div>
+                </Link>
+              </div>
+            </AnimatedSection>
+          </div>
         </section>
 
-        {/* Contact Form - Editorial Magazine Style */}
-        <section id="contact" className="px-6 md:px-12 py-20 md:py-32">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16">
-              <AnimatedSection>
-                <p className="text-xs text-[#E07B5B] uppercase tracking-[0.2em] mb-6">Contact</p>
-                <h2 className="font-editorial text-4xl md:text-6xl italic mb-8">Get in Touch</h2>
-                <p className="text-[#666] leading-relaxed mb-10 max-w-md text-lg">
-                  Interested in becoming a vendor? Have questions about the Commons? We'd love
-                  to hear from you.
-                </p>
-
-                <div className="space-y-6">
-                  {[
-                    { label: 'Email', value: 'hello@waterstreetcommons.com' },
-                    { label: 'Phone', value: '989.356.6422' },
-                  ].map((item, i) => (
-                    <div
-                      key={item.label}
-                      className="group cursor-default"
-                      style={{ transitionDelay: `${i * 100}ms` }}
-                    >
-                      <p className="text-xs text-[#999] uppercase tracking-wider mb-2">
-                        {item.label}
-                      </p>
-                      <p className="font-medium group-hover:text-[#E07B5B] group-hover:translate-x-2 transition-all duration-300">
-                        {item.value}
-                      </p>
-                    </div>
-                  ))}
-                  <div className="group cursor-default">
-                    <p className="text-xs text-[#999] uppercase tracking-wider mb-2">Address</p>
-                    <p className="font-medium group-hover:text-[#E07B5B] transition-colors">
-                      123 Water Street
-                    </p>
-                    <p className="text-[#666]">Alpena, MI 49707</p>
-                  </div>
+        {/* SPACES GRID BLOCKS */}
+        <section id="spaces" className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a]">
+          <div className="md:col-span-4 p-8 md:p-12 border-r border-[#1a1a1a] bg-[#F5F3EF]">
+            <AnimatedSection>
+              <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[#E07B5B] mb-8 text-center md:text-left">The Spaces</p>
+              <h2 className="font-editorial text-4xl md:text-6xl italic leading-none text-center md:text-left">What's at the Commons?</h2>
+            </AnimatedSection>
+          </div>
+          
+          <div className="md:col-span-8 border-b md:border-b-0 border-[#1a1a1a] group relative overflow-hidden bg-white">
+            <Link to="/blog" className="grid grid-cols-1 md:grid-cols-2 h-full">
+              <div className="aspect-square md:aspect-auto overflow-hidden border-r border-[#1a1a1a]/10">
+                <img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?q=80&w=1200&auto=format&fit=crop" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" alt="The Shops" />
+              </div>
+              <div className="p-8 md:p-12 flex flex-col justify-center">
+                <span className="font-editorial text-6xl text-[#1a1a1a]/10 mb-4">01</span>
+                <h3 className="font-editorial text-3xl md:text-4xl italic mb-6 group-hover:text-[#E07B5B] transition-colors">The Shops</h3>
+                <p className="text-sm text-[#666] leading-relaxed uppercase tracking-wider mb-8">Five tiny-but-mighty retail spaces for artisans, bakers, and makers.</p>
+                <div className="flex items-center gap-2 text-[10px] font-black tracking-widest uppercase text-[#E07B5B]">
+                  Now Accepting Applications
                 </div>
-              </AnimatedSection>
+              </div>
+            </Link>
+          </div>
+        </section>
 
-              <AnimatedSection delay={200}>
-                <div className="bg-white rounded-2xl p-8 md:p-10 shadow-sm hover:shadow-xl transition-shadow duration-500">
-                  {formStatus === 'success' ? (
-                    <div className="text-center py-12 animate-fade-up">
-                      <div className="w-16 h-16 bg-[#E07B5B]/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-                        <CheckCircle className="w-8 h-8 text-[#E07B5B]" />
-                      </div>
-                      <h3 className="font-editorial text-2xl mb-3">Message Sent!</h3>
-                      <p className="text-[#666] mb-6">
-                        Thanks for reaching out. We'll get back to you soon.
-                      </p>
-                      <button
-                        onClick={() => setFormStatus('idle')}
-                        className="text-[#E07B5B] text-sm font-medium hover:underline"
-                      >
-                        Send another message
-                      </button>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="group">
-                          <label className="text-xs text-[#999] uppercase tracking-wider block mb-2 group-focus-within:text-[#E07B5B] transition-colors">
-                            Name *
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            value={formState.name}
-                            onChange={(e) =>
-                              setFormState({ ...formState, name: e.target.value })
-                            }
-                            className="w-full px-4 py-3 bg-[#F5F3EF] rounded-lg border-2 border-transparent focus:border-[#E07B5B] focus:outline-none transition-all duration-300 hover:bg-[#f0ede8]"
-                            placeholder="Your name"
-                          />
-                        </div>
-                        <div className="group">
-                          <label className="text-xs text-[#999] uppercase tracking-wider block mb-2 group-focus-within:text-[#E07B5B] transition-colors">
-                            Email *
-                          </label>
-                          <input
-                            type="email"
-                            required
-                            value={formState.email}
-                            onChange={(e) =>
-                              setFormState({ ...formState, email: e.target.value })
-                            }
-                            className="w-full px-4 py-3 bg-[#F5F3EF] rounded-lg border-2 border-transparent focus:border-[#E07B5B] focus:outline-none transition-all duration-300 hover:bg-[#f0ede8]"
-                            placeholder="you@example.com"
-                          />
-                        </div>
-                      </div>
+        <section className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a]">
+          <div className="md:col-span-6 border-r border-[#1a1a1a] group bg-white">
+            <div className="flex flex-col h-full">
+              <div className="aspect-video overflow-hidden border-b border-[#1a1a1a]/10">
+                <img src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" alt="Anchor Shed" />
+              </div>
+              <div className="p-8 md:p-12">
+                <span className="font-editorial text-6xl text-[#1a1a1a]/10 mb-4">02</span>
+                <h3 className="font-editorial text-3xl italic mb-4">Anchor Shed</h3>
+                <p className="text-sm text-[#666] leading-relaxed uppercase tracking-wider">Our central hub for yummy drinks and treats. The heart of our social district.</p>
+              </div>
+            </div>
+          </div>
 
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="group">
-                          <label className="text-xs text-[#999] uppercase tracking-wider block mb-2 group-focus-within:text-[#E07B5B] transition-colors">
-                            Phone
-                          </label>
-                          <input
-                            type="tel"
-                            value={formState.phone}
-                            onChange={(e) =>
-                              setFormState({ ...formState, phone: e.target.value })
-                            }
-                            className="w-full px-4 py-3 bg-[#F5F3EF] rounded-lg border-2 border-transparent focus:border-[#E07B5B] focus:outline-none transition-all duration-300 hover:bg-[#f0ede8]"
-                            placeholder="(989) 555-0123"
-                          />
-                        </div>
-                        <div className="group">
-                          <label className="text-xs text-[#999] uppercase tracking-wider block mb-2 group-focus-within:text-[#E07B5B] transition-colors">
-                            Interest
-                          </label>
-                          <select
-                            value={formState.interest}
-                            onChange={(e) =>
-                              setFormState({ ...formState, interest: e.target.value })
-                            }
-                            className="w-full px-4 py-3 bg-[#F5F3EF] rounded-lg border-2 border-transparent focus:border-[#E07B5B] focus:outline-none transition-all duration-300 hover:bg-[#f0ede8] cursor-pointer"
-                          >
-                            <option value="">Select an option</option>
-                            <option value="vendor">Becoming a Vendor</option>
-                            <option value="events">Hosting an Event</option>
-                            <option value="partnership">Partnership</option>
-                            <option value="general">General Inquiry</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="group">
-                        <label className="text-xs text-[#999] uppercase tracking-wider block mb-2 group-focus-within:text-[#E07B5B] transition-colors">
-                          Message *
-                        </label>
-                        <textarea
-                          required
-                          rows={4}
-                          value={formState.message}
-                          onChange={(e) =>
-                            setFormState({ ...formState, message: e.target.value })
-                          }
-                          className="w-full px-4 py-3 bg-[#F5F3EF] rounded-lg border-2 border-transparent focus:border-[#E07B5B] focus:outline-none transition-all duration-300 hover:bg-[#f0ede8] resize-none"
-                          placeholder="Tell us about yourself..."
-                        />
-                      </div>
-
-                      {formStatus === 'error' && (
-                        <div className="p-4 bg-red-50 rounded-lg text-red-600 text-sm animate-shake">
-                          {errorMessage}
-                        </div>
-                      )}
-
-                      <button
-                        type="submit"
-                        disabled={formStatus === 'loading'}
-                        className="w-full bg-[#E07B5B] text-white py-4 rounded-full font-medium hover:bg-[#c96a4d] hover:shadow-lg hover:shadow-[#E07B5B]/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
-                      >
-                        {formStatus === 'loading' ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Sending...
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-4 h-4 group-hover:-rotate-12 transition-transform" />
-                            Send Message
-                          </>
-                        )}
-                      </button>
-                    </form>
-                  )}
-                </div>
-              </AnimatedSection>
+          <div className="md:col-span-6 group bg-white">
+            <div className="flex flex-col h-full">
+              <div className="aspect-video overflow-hidden border-b border-[#1a1a1a]/10">
+                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" alt="Cozy Square" />
+              </div>
+              <div className="p-8 md:p-12">
+                <span className="font-editorial text-6xl text-[#1a1a1a]/10 mb-4">03</span>
+                <h3 className="font-editorial text-3xl italic mb-4">Cozy Square</h3>
+                <p className="text-sm text-[#666] leading-relaxed uppercase tracking-wider">Fire pits, string lights, and plenty of room to sit and chat.</p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Footer - Editorial Magazine Style */}
-        <footer className="px-6 md:px-12 py-16 border-t border-[#e5e2dc]">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid md:grid-cols-12 gap-8 mb-16">
-              <div className="md:col-span-5">
-                <a
-                  href="#"
-                  className="font-editorial text-2xl italic block mb-6 hover:text-[#E07B5B] transition-colors"
-                >
-                  Water Street Commons
-                </a>
-                <p className="text-[#666] leading-relaxed max-w-sm">
-                  A Downtown Development Authority initiative bringing local makers together by
-                  the Thunder Bay River.
-                </p>
+        {/* SOCIAL DISTRICT BLOCK */}
+        <section className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a] bg-[#1a1a1a] text-white">
+          <div className="md:col-span-7 p-8 md:p-16 lg:p-24 border-r border-white/10 flex flex-col justify-center">
+            <AnimatedSection>
+              <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[#E07B5B] mb-8">Official Social District</p>
+              <h2 className="font-editorial text-5xl md:text-7xl lg:text-9xl italic leading-[0.85] mb-12">
+                Sip, Shop <br/> <span className="text-[#E07B5B]">& Stroll</span>
+              </h2>
+              <p className="text-sm font-bold tracking-[0.2em] uppercase leading-loose text-white/40 max-w-md">
+                Grab a cozy beverage from our anchor shed and enjoy it while you browse the shops or wander the river trail.
+              </p>
+            </AnimatedSection>
+          </div>
+          <div className="md:col-span-5 h-[400px] md:h-auto overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1200&auto=format&fit=crop" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="Social District" />
+          </div>
+        </section>
+
+        {/* VISIT BLOCK */}
+        <section id="visit" className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a]">
+          <div className="md:col-span-4 p-8 md:p-12 border-r border-[#1a1a1a] bg-white flex flex-col justify-between">
+            <AnimatedSection>
+              <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[#E07B5B] mb-8">Visit</p>
+              <h2 className="font-editorial text-4xl md:text-6xl italic leading-none mb-12 text-[#1a1a1a]">Plan Your Visit</h2>
+              <div className="w-20 h-20 border border-[#1a1a1a]/10 rounded-full flex items-center justify-center animate-spin-slow">
+                <Star className="text-[#E07B5B]" size={32} />
               </div>
-              <div className="md:col-span-3 md:col-start-7">
-                <p className="text-xs text-[#999] uppercase tracking-[0.2em] mb-6">Navigate</p>
-                <div className="space-y-3">
-                  {['About', 'Spaces', 'Vendors', 'Visit', 'Contact'].map((item) => (
-                    <a
-                      key={item}
-                      href={`#${item.toLowerCase()}`}
-                      className="block text-sm text-[#666] hover:text-[#E07B5B] hover:translate-x-1 transition-all duration-300"
-                    >
-                      {item}
-                    </a>
-                  ))}
-                </div>
+            </AnimatedSection>
+          </div>
+
+          <div className="md:col-span-4 p-8 md:p-12 border-r border-[#1a1a1a] bg-white flex flex-col justify-center">
+            <AnimatedSection delay={100}>
+              <div className="flex items-center gap-4 mb-6">
+                <Calendar size={20} className="text-[#E07B5B]" />
+                <span className="text-[10px] font-black tracking-widest uppercase">Season</span>
               </div>
-              <div className="md:col-span-2">
-                <p className="text-xs text-[#999] uppercase tracking-[0.2em] mb-6">Social</p>
-                <div className="flex gap-4">
-                  <a
-                    href="#"
-                    className="w-10 h-10 border border-[#e5e2dc] flex items-center justify-center text-[#666] hover:border-[#E07B5B] hover:text-[#E07B5B] transition-all duration-300"
-                  >
-                    <Instagram size={18} />
-                  </a>
-                  <a
-                    href="#"
-                    className="w-10 h-10 border border-[#e5e2dc] flex items-center justify-center text-[#666] hover:border-[#E07B5B] hover:text-[#E07B5B] transition-all duration-300"
-                  >
-                    <Facebook size={18} />
-                  </a>
+              <p className="font-editorial text-4xl italic mb-2">May — October</p>
+              <p className="text-[10px] font-bold text-[#999] uppercase tracking-widest">2026 Season</p>
+            </AnimatedSection>
+          </div>
+
+          <div className="md:col-span-4 p-8 md:p-12 bg-white flex flex-col justify-center">
+            <AnimatedSection delay={200}>
+              <div className="flex items-center gap-4 mb-6">
+                <Clock size={20} className="text-[#E07B5B]" />
+                <span className="text-[10px] font-black tracking-widest uppercase">Hours</span>
+              </div>
+              <div className="space-y-4">
+                {[
+                  ['Mon – Thu', '10am – 6pm'],
+                  ['Fri – Sat', '10am – 8pm'],
+                  ['Sunday', '11am – 5pm'],
+                ].map(([day, hours]) => (
+                  <div key={day} className="flex justify-between border-b border-[#1a1a1a]/5 pb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#999]">{day}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]">{hours}</span>
+                  </div>
+                ))}
+              </div>
+            </AnimatedSection>
+          </div>
+        </section>
+
+        {/* CTA / JOIN BLOCK */}
+        <section className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a] bg-[#E07B5B] text-white">
+          <div className="md:col-span-12 p-12 md:p-24 lg:p-32 text-center">
+            <AnimatedSection>
+              <p className="text-[10px] font-black tracking-[0.4em] uppercase mb-8">Join the Community</p>
+              <h2 className="font-editorial text-5xl md:text-7xl lg:text-[150px] leading-[0.8] mb-12 italic">Become a <br/> <span className="not-italic">Vendor</span></h2>
+              <p className="text-sm font-bold tracking-widest uppercase leading-loose opacity-80 max-w-2xl mx-auto mb-16">
+                We're looking for passionate makers, bakers, and creators to join our 2026 season. Built-in foot traffic and a supportive community.
+              </p>
+              <a href="#contact" className="inline-flex items-center gap-6 bg-[#1a1a1a] text-white px-12 py-6 text-[10px] font-black tracking-[0.3em] uppercase hover:bg-white hover:text-[#1a1a1a] transition-all duration-500 group">
+                Apply Now
+                <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
+              </a>
+            </AnimatedSection>
+          </div>
+        </section>
+
+        {/* CONTACT BLOCK */}
+        <section id="contact" className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a]">
+          <div className="md:col-span-5 p-8 md:p-16 border-r border-[#1a1a1a] bg-white">
+            <AnimatedSection>
+              <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[#E07B5B] mb-8">Contact</p>
+              <h2 className="font-editorial text-4xl md:text-6xl italic leading-none mb-12">Get in Touch</h2>
+              
+              <div className="space-y-12">
+                {[
+                  { label: 'Email', value: 'hello@waterstreetcommons.com' },
+                  { label: 'Phone', value: '989.356.6422' },
+                  { label: 'Address', value: '123 Water Street, Alpena, MI' },
+                ].map((item) => (
+                  <div key={item.label} className="group border-b border-[#1a1a1a]/5 pb-6">
+                    <p className="text-[9px] font-black tracking-[0.3em] uppercase text-[#999] mb-2">{item.label}</p>
+                    <p className="text-sm font-bold uppercase tracking-widest group-hover:text-[#E07B5B] transition-colors">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </AnimatedSection>
+          </div>
+
+          <div className="md:col-span-7 p-8 md:p-16 bg-[#F5F3EF]">
+            <AnimatedSection delay={200}>
+              {formStatus === 'success' ? (
+                <div className="h-full flex flex-col items-center justify-center text-center py-20">
+                  <div className="w-20 h-20 bg-[#E07B5B]/10 rounded-full flex items-center justify-center mb-8 animate-bounce">
+                    <CheckCircle className="text-[#E07B5B]" size={32} />
+                  </div>
+                  <h3 className="font-editorial text-3xl italic mb-4 text-[#1a1a1a]">Message Sent!</h3>
+                  <p className="text-[10px] font-bold text-[#999] uppercase tracking-widest mb-12 text-center md:text-left leading-relaxed max-w-sm">We'll get back to you about the 2026 season shortly.</p>
+                  <button onClick={() => setFormStatus('idle')} className="text-[10px] font-black tracking-[0.3em] uppercase text-[#E07B5B] hover:underline">Send another message</button>
                 </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black tracking-[0.3em] uppercase text-[#999]">Name</label>
+                      <input required value={formState.name} onChange={(e) => setFormState({ ...formState, name: e.target.value })} type="text" className="w-full bg-white border border-[#1a1a1a]/10 p-4 text-[10px] font-bold focus:border-[#E07B5B] focus:outline-none transition-colors" placeholder="YOUR NAME" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black tracking-[0.3em] uppercase text-[#999]">Email</label>
+                      <input required value={formState.email} onChange={(e) => setFormState({ ...formState, email: e.target.value })} type="email" className="w-full bg-white border border-[#1a1a1a]/10 p-4 text-[10px] font-bold focus:border-[#E07B5B] focus:outline-none transition-colors" placeholder="YOU@EXAMPLE.COM" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black tracking-[0.3em] uppercase text-[#999]">Interest</label>
+                    <select value={formState.interest} onChange={(e) => setFormState({ ...formState, interest: e.target.value })} className="w-full bg-white border border-[#1a1a1a]/10 p-4 text-[10px] font-bold focus:border-[#E07B5B] focus:outline-none transition-colors appearance-none cursor-pointer">
+                      <option value="">SELECT AN OPTION</option>
+                      <option value="vendor">BECOMING A VENDOR</option>
+                      <option value="general">GENERAL INQUIRY</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black tracking-[0.3em] uppercase text-[#999]">Message</label>
+                    <textarea required rows={4} value={formState.message} onChange={(e) => setFormState({ ...formState, message: e.target.value })} className="w-full bg-white border border-[#1a1a1a]/10 p-4 text-[10px] font-bold focus:border-[#E07B5B] focus:outline-none transition-colors resize-none" placeholder="TELL US ABOUT YOURSELF..."></textarea>
+                  </div>
+                  <button type="submit" disabled={formStatus === 'loading'} className="w-full bg-[#1a1a1a] text-white py-6 text-[10px] font-black tracking-[0.3em] uppercase hover:bg-[#E07B5B] transition-all duration-500 disabled:opacity-50">
+                    {formStatus === 'loading' ? 'Sending...' : 'Send Message'}
+                  </button>
+                </form>
+              )}
+            </AnimatedSection>
+          </div>
+        </section>
+
+        {/* FOOTER BLOCK */}
+        <footer className="grid grid-cols-1 md:grid-cols-12 border-b border-[#1a1a1a] bg-[#1a1a1a] text-white py-20 px-8 md:px-16">
+          <div className="md:col-span-8 flex flex-col justify-between border-r border-white/10 pr-12">
+            <div>
+              <h4 className="font-editorial text-5xl md:text-7xl italic mb-12 leading-none">Water Street <br/> Commons</h4>
+              <div className="flex flex-wrap gap-12">
+                {['Instagram', 'Facebook', 'Twitter'].map(social => (
+                  <a key={social} href="#" className="text-[10px] font-black tracking-[0.3em] uppercase hover:text-[#E07B5B] transition-colors">{social}</a>
+                ))}
               </div>
             </div>
-
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-[#e5e2dc]">
-              <p className="text-xs text-[#999] tracking-wide">
-                © 2026 WATER STREET COMMONS. DOWNTOWN ALPENA DEVELOPMENT AUTHORITY.
-              </p>
-              <div className="flex gap-8 text-xs text-[#999] tracking-wide">
-                <a href="#" className="hover:text-[#E07B5B] transition-colors">
-                  PRIVACY
-                </a>
-                <a href="#" className="hover:text-[#E07B5B] transition-colors">
-                  TERMS
-                </a>
-              </div>
+          </div>
+          <div className="md:col-span-4 flex flex-col justify-between pl-0 md:pl-12 pt-12 md:pt-0">
+            <p className="text-[10px] font-bold tracking-[0.3em] uppercase leading-loose text-white/40">
+              A Downtown Development Authority initiative bringing local makers together by the Thunder Bay River.
+            </p>
+            <div className="mt-12 pt-12 border-t border-white/10 flex justify-between items-end">
+              <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-white/20">© 2026 Alpena MI</p>
+              <Link to="/" className="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-[#1a1a1a] transition-all duration-500">
+                <ArrowRight size={20} className="-rotate-45" />
+              </Link>
             </div>
           </div>
         </footer>
       </main>
 
-      {/* CSS Animations */}
       <style>{`
         .font-editorial {
           font-family: 'Playfair Display', Georgia, serif;
         }
-
-        @keyframes fade-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
-
-        @keyframes fade-down {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-left {
-          from {
-            opacity: 0;
-            transform: translateX(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-
-        .animate-fade-up {
-          animation: fade-up 0.8s ease-out forwards;
-        }
-
-        .animate-fade-down {
-          animation: fade-down 0.6s ease-out forwards;
-        }
-
-        .animate-fade-left {
-          animation: fade-left 0.8s ease-out forwards;
-        }
-
-        .animate-shake {
-          animation: shake 0.4s ease-in-out;
+        .animate-spin-slow {
+          animation: spin-slow 20s linear infinite;
         }
       `}</style>
     </div>
