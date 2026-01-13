@@ -118,7 +118,7 @@ function BlogPage() {
                     <img
                       src={post.image}
                       alt={post.title}
-                      className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                     />
                     <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="w-12 h-12 bg-[#E07B5B] text-white rounded-full flex items-center justify-center">

@@ -295,7 +295,7 @@ function App() {
             <img
               src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=2000&auto=format&fit=crop"
               alt="Riverside View"
-              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
+              className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105"
             />
           </div>
         </section>
@@ -345,7 +345,7 @@ function App() {
           <div className="md:col-span-8 border-b md:border-b-0 border-[#1a1a1a] group relative overflow-hidden bg-white">
             <Link to="/blog" className="grid grid-cols-1 md:grid-cols-2 h-full">
               <div className="aspect-square md:aspect-auto overflow-hidden border-r border-[#1a1a1a]/10">
-                <img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?q=80&w=1200&auto=format&fit=crop" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" alt="The Shops" />
+                <img src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?q=80&w=1200&auto=format&fit=crop" className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" alt="The Shops" />
               </div>
               <div className="p-8 md:p-12 flex flex-col justify-center">
                 <span className="font-editorial text-6xl text-[#1a1a1a]/10 mb-4">01</span>
@@ -363,7 +363,7 @@ function App() {
           <div className="md:col-span-6 border-r border-[#1a1a1a] group bg-white">
             <div className="flex flex-col h-full">
               <div className="aspect-video overflow-hidden border-b border-[#1a1a1a]/10">
-                <img src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" alt="Anchor Shed" />
+                <img src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" alt="Anchor Shed" />
               </div>
               <div className="p-8 md:p-12">
                 <span className="font-editorial text-6xl text-[#1a1a1a]/10 mb-4">02</span>
@@ -376,7 +376,7 @@ function App() {
           <div className="md:col-span-6 group bg-white">
             <div className="flex flex-col h-full">
               <div className="aspect-video overflow-hidden border-b border-[#1a1a1a]/10">
-                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" alt="Cozy Square" />
+                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" alt="Cozy Square" />
               </div>
               <div className="p-8 md:p-12">
                 <span className="font-editorial text-6xl text-[#1a1a1a]/10 mb-4">03</span>
@@ -401,7 +401,7 @@ function App() {
             </AnimatedSection>
           </div>
           <div className="md:col-span-5 h-[400px] md:h-auto overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1200&auto=format&fit=crop" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="Social District" />
+            <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1200&auto=format&fit=crop" className="w-full h-full object-cover transition-all duration-1000" alt="Social District" />
           </div>
         </section>
 

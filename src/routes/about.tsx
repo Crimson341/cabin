@@ -86,7 +86,7 @@ function AboutPage() {
         <section className="border-b border-[#1a1a1a] bg-white overflow-hidden aspect-[21/9]">
           <img 
             src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=1200&auto=format&fit=crop" 
-            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+            className="w-full h-full object-cover transition-all duration-1000"
             alt="Water Street"
           />
         </section>

@@ -274,7 +274,7 @@ function BlogPostPage() {
             <img
               src={post.image}
               alt={post.title}
-              className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
+              className="w-full h-full object-cover transition-all duration-1000"
             />
           </div>
         </section>
