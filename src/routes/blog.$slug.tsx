@@ -109,7 +109,7 @@ function BlogPostPage() {
     const flushParagraph = () => {
       if (currentParagraph.length > 0) {
         elements.push(
-          <p key={`p-${elements.length}`} className="text-[#666] leading-relaxed mb-8 text-xl font-light">
+          <p key={`p-${elements.length}`} className="text-[#666] leading-relaxed mb-6 md:mb-8 text-base md:text-lg lg:text-xl font-light text-balance">
             {renderText(currentParagraph.join(' '))}
           </p>
         )
@@ -122,9 +122,9 @@ function BlogPostPage() {
         elements.push(
           <ul key={`ul-${elements.length}`} className="list-none space-y-4 mb-10 ml-4">
             {currentList.map((item, i) => (
-              <li key={i} className="flex items-start gap-4 text-[#666] text-lg font-light">
+              <li key={i} className="flex items-start gap-3 md:gap-4 text-[#666] text-base md:text-lg font-light">
                 <span className="mt-2 w-1.5 h-1.5 bg-[#9D4A4A] rounded-full shrink-0" />
-                <span>{renderText(item)}</span>
+                <span className="text-balance">{renderText(item)}</span>
               </li>
             ))}
           </ul>
@@ -138,7 +138,7 @@ function BlogPostPage() {
         flushList()
         flushParagraph()
         elements.push(
-          <h2 key={`h2-${index}`} className="font-editorial text-4xl md:text-6xl italic mb-10 mt-16 text-[#3D5A3D] leading-tight">
+          <h2 key={`h2-${index}`} className="font-editorial text-3xl md:text-4xl lg:text-6xl italic mb-6 md:mb-10 mt-8 md:mt-16 text-[#3D5A3D] leading-tight">
             {line.substring(2)}
           </h2>
         )
@@ -146,7 +146,7 @@ function BlogPostPage() {
         flushList()
         flushParagraph()
         elements.push(
-          <h3 key={`h3-${index}`} className="font-editorial text-3xl md:text-4xl italic mb-8 mt-12 text-[#3D5A3D] leading-tight">
+          <h3 key={`h3-${index}`} className="font-editorial text-2xl md:text-3xl lg:text-4xl italic mb-6 md:mb-8 mt-8 md:mt-12 text-[#3D5A3D] leading-tight">
             {line.substring(3)}
           </h3>
         )
@@ -179,14 +179,14 @@ function BlogPostPage() {
       </div>
 
       {/* Navigation Block */}
-      <nav className="relative z-10 px-6 md:px-12 py-8 border-b border-[#3D5A3D]/10 bg-[#F5F5DC]/80 backdrop-blur-md sticky top-0">
+      <nav className="relative z-10 px-4 md:px-6 lg:px-12 py-4 md:py-8 border-b border-[#3D5A3D]/10 bg-[#F5F5DC]/80 backdrop-blur-md sticky top-0">
         <div className="max-w-7xl mx-auto flex justify-between items-end">
           <div>
             <Link
               to="/blog"
-              className="text-[10px] font-bold tracking-[0.3em] uppercase hover:text-[#9D4A4A] transition-colors duration-300 flex items-center gap-2 group"
+              className="text-xs md:text-[10px] font-bold tracking-[0.3em] uppercase hover:text-[#9D4A4A] transition-colors duration-300 flex items-center gap-2 group min-h-[44px]"
             >
-              <ArrowLeft size={12} className="group-hover:-translate-x-1 transition-transform" />
+              <ArrowLeft size={16} className="md:w-3 md:h-3 group-hover:-translate-x-1 transition-transform" />
               Back to Journal
             </Link>
           </div>
@@ -199,7 +199,7 @@ function BlogPostPage() {
                 <Link
                   key={item}
                   to={isBlog ? '/blog' : isAbout ? '/about' : `/#${item.toLowerCase()}`}
-                  className={`text-[10px] font-bold tracking-widest uppercase transition-all duration-300 ${
+                  className={`text-xs md:text-[10px] font-bold tracking-widest uppercase transition-all duration-300 ${
                     isBlog ? 'text-[#9D4A4A]' : 'text-[#666] hover:text-[#3D5A3D]'
                   }`}
                 >
@@ -215,13 +215,13 @@ function BlogPostPage() {
         {/* Header Block */}
         <header className="border-b border-[#3D5A3D]/10">
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12">
-            <div className="lg:col-span-8 p-8 md:p-16 lg:p-24 border-r border-[#3D5A3D]/10">
+            <div className="lg:col-span-8 p-4 md:p-8 lg:p-16 xl:p-24 border-r border-[#3D5A3D]/10">
               <AnimatedSection>
-                <div className="flex items-center gap-4 mb-8">
-                  <span className="text-[10px] font-black tracking-[0.2em] uppercase px-4 py-1.5 border border-[#3D5A3D] bg-[#3D5A3D] text-white">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 mb-6 md:mb-8">
+                  <span className="text-xs md:text-[10px] font-black tracking-[0.2em] uppercase px-3 md:px-4 py-1.5 border border-[#3D5A3D] bg-[#3D5A3D] text-white">
                     {post.category}
                   </span>
-                  <span className="text-[10px] font-bold text-[#999] tracking-widest uppercase">
+                  <span className="text-xs md:text-[10px] font-bold text-[#999] tracking-widest uppercase">
                     {new Date(post.date).toLocaleDateString('en-US', {
                       month: 'long',
                       day: 'numeric',
@@ -229,35 +229,35 @@ function BlogPostPage() {
                     })}
                   </span>
                 </div>
-                <h1 className="font-editorial text-5xl md:text-7xl lg:text-8xl italic leading-[0.95] text-[#3D5A3D] mb-12">
+                <h1 className="font-editorial text-3xl md:text-5xl lg:text-7xl xl:text-8xl italic leading-[0.95] text-[#3D5A3D] mb-6 md:mb-12 text-balance">
                   {post.title}
                 </h1>
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4 md:gap-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-[#9D4A4A] flex items-center justify-center text-white">
                       <User size={18} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#999]">Written By</p>
-                      <p className="text-sm font-bold uppercase tracking-tight">{post.author}</p>
+                      <p className="text-xs md:text-[10px] font-bold uppercase tracking-widest text-[#999]">Written By</p>
+                      <p className="text-sm md:text-base font-bold uppercase tracking-tight">{post.author}</p>
                     </div>
                   </div>
                 </div>
               </AnimatedSection>
             </div>
             
-            <div className="lg:col-span-4 p-8 md:p-12 bg-white/30 flex flex-col justify-between">
+            <div className="lg:col-span-4 p-4 md:p-8 lg:p-12 bg-white/30 flex flex-col justify-between">
               <div className="hidden lg:block">
-                <div className="w-32 h-32 border border-[#3D5A3D]/10 rounded-full flex items-center justify-center animate-spin-slow">
-                  <Hash className="text-[#9D4A4A]" size={48} />
+                <div className="w-24 h-24 lg:w-32 lg:h-32 border border-[#3D5A3D]/10 rounded-full flex items-center justify-center animate-spin-slow">
+                  <Hash className="text-[#9D4A4A]" size={36} />
                 </div>
               </div>
-              <div className="space-y-8">
-                <div className="pt-8 border-t border-[#3D5A3D]/10">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#999] mb-4 text-center lg:text-left">Share This Story</p>
-                  <div className="flex justify-center lg:justify-start gap-4">
+              <div className="space-y-6 md:space-y-8">
+                <div className="pt-6 md:pt-8 border-t border-[#3D5A3D]/10">
+                  <p className="text-xs md:text-[10px] font-bold uppercase tracking-widest text-[#999] mb-4 text-center lg:text-left">Share This Story</p>
+                  <div className="flex justify-center lg:justify-start gap-3 md:gap-4">
                     {[1, 2, 3].map((i) => (
-                      <button key={i} className="w-12 h-12 border border-[#3D5A3D]/10 rounded-full flex items-center justify-center hover:bg-[#3D5A3D] hover:text-white transition-all duration-500 group">
+                      <button key={i} className="w-12 h-12 border border-[#3D5A3D]/10 rounded-full flex items-center justify-center hover:bg-[#3D5A3D] hover:text-white transition-all duration-500 group" aria-label={`Share option ${i}`}>
                         <Share2 size={18} className="group-hover:scale-110 transition-transform" />
                       </button>
                     ))}
@@ -270,7 +270,7 @@ function BlogPostPage() {
 
         {/* Hero Image Block */}
         <section className="border-b border-[#3D5A3D]/10 bg-white">
-          <div className="max-w-7xl mx-auto border-x border-[#3D5A3D]/10 overflow-hidden aspect-[21/9]">
+          <div className="max-w-7xl mx-auto border-x border-[#3D5A3D]/10 overflow-hidden aspect-[16/9] md:aspect-[21/9]">
             <img
               src={post.image}
               alt={post.title}
@@ -283,9 +283,9 @@ function BlogPostPage() {
         <section>
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12">
             {/* Main Content Block */}
-            <div className="lg:col-span-8 p-8 md:p-16 lg:p-24 border-r border-[#3D5A3D]/10 bg-white/50">
+            <div className="lg:col-span-8 p-4 md:p-8 lg:p-16 xl:p-24 border-r border-[#3D5A3D]/10 bg-white/50">
               <article className="max-w-3xl">
-                <div className="text-2xl md:text-3xl font-editorial italic leading-relaxed text-[#3D5A3D] mb-16 border-l-4 border-[#9D4A4A] pl-8 py-2">
+                <div className="text-xl md:text-2xl lg:text-3xl font-editorial italic leading-relaxed text-[#3D5A3D] mb-8 md:mb-16 border-l-4 border-[#9D4A4A] pl-4 md:pl-8 py-2 text-balance">
                   {post.excerpt}
                 </div>
                 <div className="prose-custom">
@@ -296,12 +296,12 @@ function BlogPostPage() {
 
             {/* Sidebar Block */}
             <div className="lg:col-span-4 bg-white/20">
-              <div className="sticky top-32 p-8 md:p-12 space-y-16">
+              <div className="sticky top-24 md:top-32 p-4 md:p-8 lg:p-12 space-y-12 md:space-y-16">
                 <div>
-                  <p className="text-[10px] font-black tracking-[0.3em] uppercase text-[#9D4A4A] mb-8 pb-4 border-b border-[#3D5A3D]/10">
+                  <p className="text-xs md:text-[10px] font-black tracking-[0.3em] uppercase text-[#9D4A4A] mb-6 md:mb-8 pb-4 border-b border-[#3D5A3D]/10">
                     Up Next
                   </p>
-                  <div className="space-y-12">
+                  <div className="space-y-8 md:space-y-12">
                     {relatedPosts.map((rp) => (
                       <Link
                         key={rp.slug}
@@ -309,22 +309,22 @@ function BlogPostPage() {
                         params={{ slug: rp.slug }}
                         className="group block"
                       >
-                        <div className="aspect-video overflow-hidden mb-4 border border-[#3D5A3D]/5">
+                        <div className="aspect-video overflow-hidden mb-3 md:mb-4 border border-[#3D5A3D]/5">
                           <img src={rp.image} alt={rp.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                         </div>
-                        <p className="text-[9px] font-bold tracking-widest uppercase text-[#999] mb-2">{rp.category}</p>
-                        <h4 className="font-editorial text-xl italic group-hover:text-[#9D4A4A] transition-colors">{rp.title}</h4>
+                        <p className="text-xs md:text-[9px] font-bold tracking-widest uppercase text-[#999] mb-2">{rp.category}</p>
+                        <h4 className="font-editorial text-lg md:text-xl italic group-hover:text-[#9D4A4A] transition-colors text-balance">{rp.title}</h4>
                       </Link>
                     ))}
                   </div>
                 </div>
 
-                <div className="p-8 border border-[#3D5A3D]/10 bg-white/50">
-                  <h4 className="font-editorial text-2xl italic mb-4">Join our journal</h4>
-                  <p className="text-xs text-[#666] leading-relaxed mb-6 uppercase tracking-wider">Get fresh updates and vendor stories delivered to your inbox.</p>
-                  <div className="flex flex-col gap-2">
-                    <input type="email" placeholder="EMAIL ADDRESS" className="bg-[#F5F5DC] border-b border-[#3D5A3D]/20 px-0 py-3 text-[10px] font-bold focus:outline-none focus:border-[#9D4A4A] transition-colors" />
-                    <button className="mt-4 bg-[#3D5A3D] text-white py-4 text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#9D4A4A] transition-all duration-300">
+                <div className="p-6 md:p-8 border border-[#3D5A3D]/10 bg-white/50">
+                  <h4 className="font-editorial text-xl md:text-2xl italic mb-3 md:mb-4">Join our journal</h4>
+                  <p className="text-xs md:text-sm text-[#666] leading-relaxed mb-4 md:mb-6 uppercase tracking-wider text-balance">Get fresh updates and vendor stories delivered to your inbox.</p>
+                  <div className="flex flex-col gap-3 md:gap-2">
+                    <input type="email" placeholder="EMAIL ADDRESS" className="bg-[#F5F5DC] border-b border-[#3D5A3D]/20 px-0 py-3 text-base md:text-sm font-bold focus:outline-none focus:border-[#9D4A4A] transition-colors min-h-[44px]" />
+                    <button className="mt-4 bg-[#3D5A3D] text-white py-4 text-sm md:text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#9D4A4A] transition-all duration-300 min-h-[44px]">
                       Subscribe
                     </button>
                   </div>
@@ -336,17 +336,17 @@ function BlogPostPage() {
       </main>
 
       {/* Footer Block */}
-      <footer className="relative z-10 border-t border-[#3D5A3D] bg-[#3D5A3D] text-white py-20 px-6 md:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+      <footer className="relative z-10 border-t border-[#3D5A3D] bg-[#3D5A3D] text-white py-12 md:py-20 px-4 md:px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
           <div>
-            <h4 className="font-editorial text-3xl italic mb-2">Water Street Commons</h4>
-            <p className="text-[#999] text-[10px] font-bold tracking-widest uppercase">
+            <h4 className="font-editorial text-2xl md:text-3xl italic mb-2">Water Street Commons</h4>
+            <p className="text-[#999] text-xs md:text-[10px] font-bold tracking-widest uppercase">
               © 2026 Downtown Bula Development Authority
             </p>
           </div>
           <Link
             to="/blog"
-            className="px-8 py-4 border border-white/20 text-[10px] font-bold tracking-widest uppercase hover:bg-white hover:text-[#3D5A3D] transition-all duration-500"
+            className="px-6 py-3 md:px-8 md:py-4 border border-white/20 text-xs md:text-[10px] font-bold tracking-widest uppercase hover:bg-white hover:text-[#3D5A3D] transition-all duration-500 min-h-[44px] flex items-center"
           >
             Back to Journal
           </Link>
