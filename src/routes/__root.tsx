@@ -27,22 +27,22 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Water Street Commons | Downtown Alpena',
+        title: 'Water Street Commons | Downtown Bula',
       },
       {
         name: 'description',
         content:
-          'A colorful riverside nook in Downtown Alpena. Five tiny shops for local makers to grow, share, and sparkle.',
+          'A colorful riverside nook in Downtown Bula. Five tiny shops for local makers to grow, share, and sparkle.',
       },
       // Open Graph
       {
         property: 'og:title',
-        content: 'Water Street Commons | Downtown Alpena',
+        content: 'Water Street Commons | Downtown Bula',
       },
       {
         property: 'og:description',
         content:
-          'A colorful riverside nook in Downtown Alpena. Five tiny shops for local makers to grow, share, and sparkle.',
+          'A colorful riverside nook in Downtown Bula. Five tiny shops for local makers to grow, share, and sparkle.',
       },
       {
         property: 'og:image',
@@ -64,12 +64,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       {
         name: 'twitter:title',
-        content: 'Water Street Commons | Downtown Alpena',
+        content: 'Water Street Commons | Downtown Bula',
       },
       {
         name: 'twitter:description',
         content:
-          'A colorful riverside nook in Downtown Alpena. Five tiny shops for local makers to grow, share, and sparkle.',
+          'A colorful riverside nook in Downtown Bula. Five tiny shops for local makers to grow, share, and sparkle.',
       },
       {
         name: 'twitter:image',

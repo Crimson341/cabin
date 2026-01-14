@@ -181,7 +181,7 @@ function BlogPage() {
               A Downtown Development Authority initiative bringing local makers together by the Thunder Bay River.
             </p>
             <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-white/20 mt-12">
-              © 2026 Alpena MI
+              © 2026 Bula MI
             </p>
           </div>
         </footer>

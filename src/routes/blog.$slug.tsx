@@ -341,7 +341,7 @@ function BlogPostPage() {
           <div>
             <h4 className="font-editorial text-3xl italic mb-2">Water Street Commons</h4>
             <p className="text-[#999] text-[10px] font-bold tracking-widest uppercase">
-              © 2026 Downtown Alpena Development Authority
+              © 2026 Downtown Bula Development Authority
             </p>
           </div>
           <Link

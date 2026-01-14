@@ -234,7 +234,7 @@ function App() {
                   Established 2026
                 </span>
                 <span className="text-[10px] font-bold text-[#999] tracking-widest uppercase">
-                  Alpena, MI
+                  Bula, MI
                 </span>
               </div>
             </AnimatedSection>
@@ -478,7 +478,7 @@ function App() {
                 {[
                   { label: 'Email', value: 'hello@waterstreetcommons.com' },
                   { label: 'Phone', value: '989.356.6422' },
-                  { label: 'Address', value: '123 Water Street, Alpena, MI' },
+                  { label: 'Address', value: '123 Water Street, Bula, MI' },
                 ].map((item) => (
                   <div key={item.label} className="group border-b border-[#1a1a1a]/5 pb-6">
                     <p className="text-[9px] font-black tracking-[0.3em] uppercase text-[#999] mb-2">{item.label}</p>
@@ -550,7 +550,7 @@ function App() {
               A Downtown Development Authority initiative bringing local makers together by the Thunder Bay River.
             </p>
             <div className="mt-12 pt-12 border-t border-white/10 flex justify-between items-end">
-              <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-white/20">© 2026 Alpena MI</p>
+              <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-white/20">© 2026 Bula MI</p>
               <Link to="/" className="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-[#1a1a1a] transition-all duration-500">
                 <ArrowRight size={20} className="-rotate-45" />
               </Link>

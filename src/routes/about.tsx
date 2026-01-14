@@ -36,7 +36,7 @@ function AboutPage() {
                 Our <span className="text-[#E07B5B]">Story</span>
               </h1>
               <p className="mt-8 text-sm font-bold tracking-widest uppercase text-[#999] max-w-md text-balance leading-relaxed">
-                A colorful riverside nook in Downtown Alpena. Five tiny shops for local makers to grow, share, and sparkle.
+                A colorful riverside nook in Downtown Bula. Five tiny shops for local makers to grow, share, and sparkle.
               </p>
             </div>
           </div>
@@ -97,7 +97,7 @@ function AboutPage() {
             <Users size={32} className="text-[#E07B5B] mb-8" />
             <h3 className="font-editorial text-5xl italic mb-8 leading-tight">Five Tiny Shops</h3>
             <p className="text-lg text-[#666] leading-relaxed mb-12">
-              Our 2026 season features a curated mix of artisans, bakers, and creators. Each space is uniquely designed to showcase the best of Alpena's local talent.
+              Our 2026 season features a curated mix of artisans, bakers, and creators. Each space is uniquely designed to showcase the best of Bula's local talent.
             </p>
             <Link to="/blog" className="inline-flex items-center gap-4 text-[10px] font-black tracking-[0.3em] uppercase group">
               Meet our vendors
@@ -111,7 +111,7 @@ function AboutPage() {
             <MapPin size={32} className="text-[#E07B5B] mb-8" />
             <h3 className="font-editorial text-5xl italic mb-8 leading-tight text-[#1a1a1a]">The Location</h3>
             <p className="text-lg text-[#666] leading-relaxed mb-12">
-              Situated right on the Thunder Bay River, Water Street Commons is the anchor of Alpena's downtown social district.
+              Situated right on the Thunder Bay River, Water Street Commons is the anchor of Bula's downtown social district.
             </p>
             <a href="#visit" className="inline-flex items-center gap-4 text-[10px] font-black tracking-[0.3em] uppercase group">
               Plan your visit
@@ -137,7 +137,7 @@ function AboutPage() {
               A Downtown Development Authority initiative bringing local makers together by the Thunder Bay River.
             </p>
             <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-white/20 mt-12">
-              © 2026 Alpena MI
+              © 2026 Bula MI
             </p>
           </div>
         </footer>
