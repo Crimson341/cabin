@@ -1,16 +1,17 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { useState, useEffect, useRef } from 'react'
-import { Calendar, ArrowLeft, Clock, User, Hash, Share2 } from 'lucide-react'
-import { getBlogPost, blogPosts } from '../data/blog-posts'
+import { ArrowLeft, User, Hash, Share2 } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import type { BlogPost } from '../data/blog-posts'
 
 export const Route = createFileRoute('/blog/$slug')({
   component: BlogPostPage,
   loader: async ({ params }) => {
-    const post = getBlogPost(params.slug)
-    if (!post) {
-      throw notFound()
-    }
-    return { post }
+    const res = await fetch(`/api/blog?slug=${encodeURIComponent(params.slug)}`)
+    if (!res.ok) throw notFound()
+    const data = await res.json()
+    if (!data.post) throw notFound()
+    return { post: data.post as BlogPost }
   },
 })
 
@@ -69,9 +70,17 @@ function AnimatedSection({
 
 function BlogPostPage() {
   const { post } = Route.useLoaderData()
-  
-  // Find related posts (others in same category or just others)
-  const relatedPosts = blogPosts
+
+  // Fetch all posts for related posts sidebar
+  const { data: allPostsData } = useQuery({
+    queryKey: ['blog-posts'],
+    queryFn: () =>
+      fetch('/api/blog')
+        .then((r) => r.json())
+        .then((d) => (d.posts ?? []) as BlogPost[]),
+  })
+
+  const relatedPosts = (allPostsData ?? [])
     .filter((p) => p.slug !== post.slug)
     .slice(0, 2)
 
@@ -245,7 +254,7 @@ function BlogPostPage() {
                 </div>
               </AnimatedSection>
             </div>
-            
+
             <div className="lg:col-span-4 p-4 md:p-8 lg:p-12 bg-white/30 flex flex-col justify-between">
               <div className="hidden lg:block">
                 <div className="w-24 h-24 lg:w-32 lg:h-32 border border-[#3D5A3D]/10 rounded-full flex items-center justify-center animate-spin-slow">
@@ -322,12 +331,7 @@ function BlogPostPage() {
                 <div className="p-6 md:p-8 border border-[#3D5A3D]/10 bg-white/50">
                   <h4 className="font-editorial text-xl md:text-2xl italic mb-3 md:mb-4">Join our journal</h4>
                   <p className="text-xs md:text-sm text-[#666] leading-relaxed mb-4 md:mb-6 uppercase tracking-wider text-balance">Get fresh updates and vendor stories delivered to your inbox.</p>
-                  <div className="flex flex-col gap-3 md:gap-2">
-                    <input type="email" placeholder="EMAIL ADDRESS" className="bg-[#F5F5DC] border-b border-[#3D5A3D]/20 px-0 py-3 text-base md:text-sm font-bold focus:outline-none focus:border-[#9D4A4A] transition-colors min-h-[44px]" />
-                    <button className="mt-4 bg-[#3D5A3D] text-white py-4 text-sm md:text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#9D4A4A] transition-all duration-300 min-h-[44px]">
-                      Subscribe
-                    </button>
-                  </div>
+                  <p className="text-xs text-[#3D5A3D]/40 font-bold tracking-widest uppercase">Newsletter coming soon</p>
                 </div>
               </div>
             </div>

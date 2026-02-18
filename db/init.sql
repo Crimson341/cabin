@@ -8,3 +8,19 @@ CREATE TABLE IF NOT EXISTS contact_submissions (
     message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Blog posts
+CREATE TABLE IF NOT EXISTS blog_posts (
+    id SERIAL PRIMARY KEY,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    excerpt TEXT,
+    content TEXT NOT NULL,
+    author VARCHAR(255),
+    date DATE,
+    image VARCHAR(500),
+    category VARCHAR(100),
+    published BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

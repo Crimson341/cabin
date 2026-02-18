@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -16,17 +18,36 @@ import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-qu
 import { Route as DemoNeonRouteImport } from './routes/demo/neon'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiContactRouteImport } from './routes/api.contact'
+import { Route as ApiBlogRouteImport } from './routes/api.blog'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as ApiDashboardSubmissionsRouteImport } from './routes/api.dashboard.submissions'
+import { Route as ApiDashboardStatsRouteImport } from './routes/api.dashboard.stats'
+import { Route as ApiDashboardBlogRouteImport } from './routes/api.dashboard.blog'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api.auth.logout'
+import { Route as ApiAuthLoginRouteImport } from './routes/api.auth.login'
+import { Route as ApiAuthCheckRouteImport } from './routes/api.auth.check'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as ApiDashboardBlogCreateRouteImport } from './routes/api.dashboard.blog.create'
+import { Route as ApiDashboardBlogSlugRouteImport } from './routes/api.dashboard.blog.$slug'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -62,6 +83,11 @@ const ApiContactRoute = ApiContactRouteImport.update({
   path: '/api/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBlogRoute = ApiBlogRouteImport.update({
+  id: '/api/blog',
+  path: '/api/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
   path: '/demo/start/server-funcs',
@@ -92,6 +118,36 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDashboardSubmissionsRoute = ApiDashboardSubmissionsRouteImport.update({
+  id: '/api/dashboard/submissions',
+  path: '/api/dashboard/submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDashboardStatsRoute = ApiDashboardStatsRouteImport.update({
+  id: '/api/dashboard/stats',
+  path: '/api/dashboard/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDashboardBlogRoute = ApiDashboardBlogRouteImport.update({
+  id: '/api/dashboard/blog',
+  path: '/api/dashboard/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
+  id: '/api/auth/login',
+  path: '/api/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthCheckRoute = ApiAuthCheckRouteImport.update({
+  id: '/api/auth/check',
+  path: '/api/auth/check',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
   id: '/demo/start/ssr/',
   path: '/demo/start/ssr/',
@@ -112,21 +168,42 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
   path: '/demo/start/ssr/data-only',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDashboardBlogCreateRoute = ApiDashboardBlogCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => ApiDashboardBlogRoute,
+} as any)
+const ApiDashboardBlogSlugRoute = ApiDashboardBlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ApiDashboardBlogRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/api/blog': typeof ApiBlogRoute
   '/api/contact': typeof ApiContactRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/demo/neon': typeof DemoNeonRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/blog': typeof BlogIndexRoute
+  '/api/auth/check': typeof ApiAuthCheckRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/dashboard/blog': typeof ApiDashboardBlogRouteWithChildren
+  '/api/dashboard/stats': typeof ApiDashboardStatsRoute
+  '/api/dashboard/submissions': typeof ApiDashboardSubmissionsRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/dashboard/blog/$slug': typeof ApiDashboardBlogSlugRoute
+  '/api/dashboard/blog/create': typeof ApiDashboardBlogCreateRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -135,17 +212,28 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/api/blog': typeof ApiBlogRoute
   '/api/contact': typeof ApiContactRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/demo/neon': typeof DemoNeonRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/blog': typeof BlogIndexRoute
+  '/api/auth/check': typeof ApiAuthCheckRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/dashboard/blog': typeof ApiDashboardBlogRouteWithChildren
+  '/api/dashboard/stats': typeof ApiDashboardStatsRoute
+  '/api/dashboard/submissions': typeof ApiDashboardSubmissionsRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/dashboard/blog/$slug': typeof ApiDashboardBlogSlugRoute
+  '/api/dashboard/blog/create': typeof ApiDashboardBlogCreateRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -155,17 +243,28 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/api/blog': typeof ApiBlogRoute
   '/api/contact': typeof ApiContactRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/demo/neon': typeof DemoNeonRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/auth/check': typeof ApiAuthCheckRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/dashboard/blog': typeof ApiDashboardBlogRouteWithChildren
+  '/api/dashboard/stats': typeof ApiDashboardStatsRoute
+  '/api/dashboard/submissions': typeof ApiDashboardSubmissionsRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/dashboard/blog/$slug': typeof ApiDashboardBlogSlugRoute
+  '/api/dashboard/blog/create': typeof ApiDashboardBlogCreateRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -176,17 +275,28 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/dashboard'
+    | '/login'
+    | '/api/blog'
     | '/api/contact'
     | '/blog/$slug'
     | '/demo/neon'
     | '/demo/tanstack-query'
     | '/blog'
+    | '/api/auth/check'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/dashboard/blog'
+    | '/api/dashboard/stats'
+    | '/api/dashboard/submissions'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/dashboard/blog/$slug'
+    | '/api/dashboard/blog/create'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -195,17 +305,28 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/dashboard'
+    | '/login'
+    | '/api/blog'
     | '/api/contact'
     | '/blog/$slug'
     | '/demo/neon'
     | '/demo/tanstack-query'
     | '/blog'
+    | '/api/auth/check'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/dashboard/blog'
+    | '/api/dashboard/stats'
+    | '/api/dashboard/submissions'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/dashboard/blog/$slug'
+    | '/api/dashboard/blog/create'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -214,17 +335,28 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/dashboard'
+    | '/login'
+    | '/api/blog'
     | '/api/contact'
     | '/blog/$slug'
     | '/demo/neon'
     | '/demo/tanstack-query'
     | '/blog/'
+    | '/api/auth/check'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/dashboard/blog'
+    | '/api/dashboard/stats'
+    | '/api/dashboard/submissions'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/dashboard/blog/$slug'
+    | '/api/dashboard/blog/create'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -234,11 +366,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  DashboardRoute: typeof DashboardRoute
+  LoginRoute: typeof LoginRoute
+  ApiBlogRoute: typeof ApiBlogRoute
   ApiContactRoute: typeof ApiContactRoute
   BlogSlugRoute: typeof BlogSlugRoute
   DemoNeonRoute: typeof DemoNeonRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  ApiAuthCheckRoute: typeof ApiAuthCheckRoute
+  ApiAuthLoginRoute: typeof ApiAuthLoginRoute
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
+  ApiDashboardBlogRoute: typeof ApiDashboardBlogRouteWithChildren
+  ApiDashboardStatsRoute: typeof ApiDashboardStatsRoute
+  ApiDashboardSubmissionsRoute: typeof ApiDashboardSubmissionsRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
@@ -253,6 +394,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -302,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/blog': {
+      id: '/api/blog'
+      path: '/api/blog'
+      fullPath: '/api/blog'
+      preLoaderRoute: typeof ApiBlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
       path: '/demo/start/server-funcs'
@@ -344,6 +506,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/dashboard/submissions': {
+      id: '/api/dashboard/submissions'
+      path: '/api/dashboard/submissions'
+      fullPath: '/api/dashboard/submissions'
+      preLoaderRoute: typeof ApiDashboardSubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/dashboard/stats': {
+      id: '/api/dashboard/stats'
+      path: '/api/dashboard/stats'
+      fullPath: '/api/dashboard/stats'
+      preLoaderRoute: typeof ApiDashboardStatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/dashboard/blog': {
+      id: '/api/dashboard/blog'
+      path: '/api/dashboard/blog'
+      fullPath: '/api/dashboard/blog'
+      preLoaderRoute: typeof ApiDashboardBlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/login': {
+      id: '/api/auth/login'
+      path: '/api/auth/login'
+      fullPath: '/api/auth/login'
+      preLoaderRoute: typeof ApiAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/check': {
+      id: '/api/auth/check'
+      path: '/api/auth/check'
+      fullPath: '/api/auth/check'
+      preLoaderRoute: typeof ApiAuthCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/ssr/': {
       id: '/demo/start/ssr/'
       path: '/demo/start/ssr'
@@ -372,17 +576,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/dashboard/blog/create': {
+      id: '/api/dashboard/blog/create'
+      path: '/create'
+      fullPath: '/api/dashboard/blog/create'
+      preLoaderRoute: typeof ApiDashboardBlogCreateRouteImport
+      parentRoute: typeof ApiDashboardBlogRoute
+    }
+    '/api/dashboard/blog/$slug': {
+      id: '/api/dashboard/blog/$slug'
+      path: '/$slug'
+      fullPath: '/api/dashboard/blog/$slug'
+      preLoaderRoute: typeof ApiDashboardBlogSlugRouteImport
+      parentRoute: typeof ApiDashboardBlogRoute
+    }
   }
 }
+
+interface ApiDashboardBlogRouteChildren {
+  ApiDashboardBlogSlugRoute: typeof ApiDashboardBlogSlugRoute
+  ApiDashboardBlogCreateRoute: typeof ApiDashboardBlogCreateRoute
+}
+
+const ApiDashboardBlogRouteChildren: ApiDashboardBlogRouteChildren = {
+  ApiDashboardBlogSlugRoute: ApiDashboardBlogSlugRoute,
+  ApiDashboardBlogCreateRoute: ApiDashboardBlogCreateRoute,
+}
+
+const ApiDashboardBlogRouteWithChildren =
+  ApiDashboardBlogRoute._addFileChildren(ApiDashboardBlogRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  DashboardRoute: DashboardRoute,
+  LoginRoute: LoginRoute,
+  ApiBlogRoute: ApiBlogRoute,
   ApiContactRoute: ApiContactRoute,
   BlogSlugRoute: BlogSlugRoute,
   DemoNeonRoute: DemoNeonRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   BlogIndexRoute: BlogIndexRoute,
+  ApiAuthCheckRoute: ApiAuthCheckRoute,
+  ApiAuthLoginRoute: ApiAuthLoginRoute,
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
+  ApiDashboardBlogRoute: ApiDashboardBlogRouteWithChildren,
+  ApiDashboardStatsRoute: ApiDashboardStatsRoute,
+  ApiDashboardSubmissionsRoute: ApiDashboardSubmissionsRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,

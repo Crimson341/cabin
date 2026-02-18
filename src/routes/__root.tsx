@@ -12,6 +12,8 @@ import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 
+import { JsonLd, buildOrganizationJsonLd, SEO_DEFAULT_DESCRIPTION, SEO_DEFAULT_OG_IMAGE, SEO_SITE_NAME, SEO_SITE_ORIGIN } from '../seo'
+
 interface MyRouterContext {
   queryClient: QueryClient
 }
@@ -27,31 +29,28 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Water Street Commons | Downtown Bula',
+        title: `${SEO_SITE_NAME} | Downtown Bula`,
       },
       {
         name: 'description',
-        content:
-          'A colorful riverside nook in Downtown Bula. Five tiny shops for local makers to grow, share, and sparkle.',
+        content: SEO_DEFAULT_DESCRIPTION,
       },
       // Open Graph
       {
         property: 'og:title',
-        content: 'Water Street Commons | Downtown Bula',
+        content: `${SEO_SITE_NAME} | Downtown Bula`,
       },
       {
         property: 'og:description',
-        content:
-          'A colorful riverside nook in Downtown Bula. Five tiny shops for local makers to grow, share, and sparkle.',
+        content: SEO_DEFAULT_DESCRIPTION,
       },
       {
         property: 'og:image',
-        content:
-          'https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=1200&auto=format&fit=crop',
+        content: SEO_DEFAULT_OG_IMAGE,
       },
       {
         property: 'og:url',
-        content: 'https://waterstreetcommons.com',
+        content: SEO_SITE_ORIGIN,
       },
       {
         property: 'og:type',
@@ -64,17 +63,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       {
         name: 'twitter:title',
-        content: 'Water Street Commons | Downtown Bula',
+        content: `${SEO_SITE_NAME} | Downtown Bula`,
       },
       {
         name: 'twitter:description',
-        content:
-          'A colorful riverside nook in Downtown Bula. Five tiny shops for local makers to grow, share, and sparkle.',
+        content: SEO_DEFAULT_DESCRIPTION,
       },
       {
         name: 'twitter:image',
-        content:
-          'https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=1200&auto=format&fit=crop',
+        content: SEO_DEFAULT_OG_IMAGE,
       },
     ],
     links: [
@@ -108,19 +105,22 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <JsonLd data={buildOrganizationJsonLd()} />
         {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
+        {import.meta.env.DEV && (
+          <TanStackDevtools
+            config={{
+              position: 'bottom-right',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              TanStackQueryDevtools,
+            ]}
+          />
+        )}
         <Scripts />
       </body>
     </html>
